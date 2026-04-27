@@ -1,61 +1,60 @@
-// src/components/Navbar.jsx
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ShoppingCartIcon, XMarkIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 import { jwtDecode } from "jwt-decode";
-import Logo from "../../assets/Logo.png"; // Adjust path as needed
+import Logo from "../../assets/Logo.png";
+
+const DOT_SIZE = 22;
+const RED = "#C0392B";
+const RED_GLOW = "rgba(192,57,43,0.22)";
+
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [userType, setUserType] = useState(null);
-  const [cartCount, setCartCount] = useState(0);
+  const [introState, setIntroState] = useState("idle");
+  const introPlayedRef = useRef(false);
+  const pillRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Close mobile menu on route change
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.innerWidth < 768
+  );
   useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
+    const fn = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
 
-  // Check auth status
+  useEffect(() => { setOpen(false); }, [location.pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const h = (e) => {
+      if (pillRef.current && !pillRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [open]);
+
   const checkAuth = () => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserType(decoded.usertype);
-      } catch {
-        setUserType(null);
-      }
-    } else {
-      setUserType(null);
-    }
-  };
-
-  // Update cart count
-  const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const total = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    setCartCount(total);
+      try { setUserType(jwtDecode(token).usertype); }
+      catch { setUserType(null); }
+    } else { setUserType(null); }
   };
 
   useEffect(() => {
     checkAuth();
-    updateCartCount();
-
-    const handleChange = () => {
-      checkAuth();
-      updateCartCount();
-    };
-
-    window.addEventListener("storage", handleChange);
-    window.addEventListener("authChanged", handleChange);
-    window.addEventListener("cartUpdated", updateCartCount);
-
+    const h = () => checkAuth();
+    window.addEventListener("storage", h);
+    window.addEventListener("authChanged", h);
     return () => {
-      window.removeEventListener("storage", handleChange);
-      window.removeEventListener("authChanged", handleChange);
-      window.removeEventListener("cartUpdated", updateCartCount);
+      window.removeEventListener("storage", h);
+      window.removeEventListener("authChanged", h);
     };
   }, []);
 
@@ -67,149 +66,315 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  // Navigation for regular users
+  // intro animation — once on mount
+  useEffect(() => {
+    if (introPlayedRef.current) return;
+    introPlayedRef.current = true;
+    const t1 = setTimeout(() => {
+      setIntroState("expanding");
+      const t2 = setTimeout(() => {
+        setIntroState("collapsing");
+        const t3 = setTimeout(() => setIntroState("idle"), 440);
+        return () => clearTimeout(t3);
+      }, 860);
+      return () => clearTimeout(t2);
+    }, 600);
+    return () => clearTimeout(t1);
+  }, []);
+
+  // nav items
   const normalNavItems = [
     { name: "Accueil", link: "/" },
     { name: "À propos", link: "/about" },
     { name: "Produits", link: "/products" },
     { name: "Contact", link: "/sell-us-something" },
   ];
-
-  // Admin navigation (kept as is)
   const adminNavItems = [
     { name: "Dashboard", link: "/admin/dashboard" },
-    { name: "Commandes", link: "/admin/orders" },
-    { name: "Produits", link: "/admin/products" },
+    { name: "Cars", link: "/admin/cars" },
+    { name: "Galerie", link: "/admin/gallery" },
   ];
-
   const superadminNavItems = [
     { name: "Dashboard", link: "/admin/dashboard" },
-    { name: "Commandes", link: "/admin/orders" },
-    { name: "Produits", link: "/admin/products" },
-    { name: "Catégories", link: "/admin/categories" },
-    { name: "Livraison", link: "/admin/delivery-areas" },
     { name: "Utilisateurs", link: "/admin/users" },
+    { name: "Cars", link: "/admin/cars" },
+    { name: "Noms", link: "/admin/car-names" },
+    { name: "Galerie", link: "/admin/gallery" },
+    { name: "Messages", link: "/admin/contacts" },
   ];
 
   const navItems =
-    userType === "superadmin"
-      ? superadminNavItems
-      : userType === "admin"
-      ? adminNavItems
-      : normalNavItems;
+    userType === "superadmin" ? superadminNavItems :
+    userType === "admin" ? adminNavItems :
+    normalNavItems;
 
   const isAdmin = userType === "admin" || userType === "superadmin";
+  const isExpanded = open || introState === "expanding";
+  const introDone = introState === "idle";
+
+  // pill width adapts to item count
+  const pillWidth = isAdmin
+    ? (userType === "superadmin" ? 820 : 640)
+    : 620;
+
+  const pillAnimate = (() => {
+    if (introState === "expanding") {
+      return isMobile
+        ? { width: "92vw", height: "auto", borderRadius: 20 }
+        : { width: pillWidth, height: 64, borderRadius: 32 };
+    }
+    if (open) {
+      return isMobile
+        ? { width: "92vw", height: "auto", borderRadius: 20 }
+        : { width: pillWidth, height: 64, borderRadius: 32 };
+    }
+    return { width: DOT_SIZE, height: DOT_SIZE, borderRadius: 999 };
+  })();
+
+  const pillTransition = (() => {
+    if (introState === "expanding") return { type: "spring", stiffness: 255, damping: 23 };
+    if (introState === "collapsing") return { type: "spring", stiffness: 340, damping: 30 };
+    return { type: "spring", stiffness: 280, damping: 28 };
+  })();
+
+  const shellStyle = isMobile
+    ? { position: "fixed", top: 16, right: 16, zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "flex-end" }
+    : { position: "fixed", top: 18, left: "50%", transform: "translateX(-50%)", zIndex: 1000, display: "flex", flexDirection: "column", alignItems: "center" };
 
   return (
-    <>
-      <nav className="fixed top-0 left-0 w-full z-50">
-        <div
-          className={`max-w-7xl mx-auto px-6 py-5 flex items-center justify-between backdrop-blur-xl transition-all duration-300 shadow-lg rounded-b-3xl ${
-            isAdmin
-              ? "bg-[#ffffff]/95 text-stone-800 border-b border-stone-300"
-              : "bg-white text-stone-800 border-b border-stone-100"
-          }`}
-        >
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link to="/">
-              <img
-                src={Logo}   // Make sure path is correct
-                alt="Logo"
-                className="h-12 w-auto"
+    <div style={shellStyle}>
+      <motion.div
+        ref={pillRef}
+        onClick={() => { if (!open && introDone) setOpen(true); }}
+        animate={pillAnimate}
+        transition={pillTransition}
+        style={{
+          background: isExpanded ? "#1a0a09" : RED,
+          overflow: "hidden",
+          cursor: isExpanded ? "default" : "pointer",
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: isExpanded
+            ? `0 12px 48px rgba(192,57,43,0.28), 0 0 0 1px rgba(192,57,43,0.18)`
+            : `0 0 0 5px ${RED_GLOW}, 0 4px 18px rgba(192,57,43,0.38)`,
+        }}
+      >
+        {/* Pulse rings */}
+        <AnimatePresence>
+          {!open && introDone && (
+            <>
+              <motion.div key="p1"
+                initial={{ scale: 1, opacity: 0.5 }}
+                animate={{ scale: 3.6, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+                style={{ position: "absolute", inset: 0, borderRadius: "50%", background: RED, pointerEvents: "none" }}
               />
-            </Link>
-          </motion.div>
+              <motion.div key="p2"
+                initial={{ scale: 1, opacity: 0.28 }}
+                animate={{ scale: 2.9, opacity: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut", delay: 0.7 }}
+                style={{ position: "absolute", inset: 0, borderRadius: "50%", background: RED, pointerEvents: "none" }}
+              />
+            </>
+          )}
+        </AnimatePresence>
 
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex items-center gap-10 font-medium text-lg">
-            {navItems.map((item, i) => {
-              const isActive = location.pathname === item.link;
-              return (
-                <motion.li
-                  key={i}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link
-                    to={item.link}
-                    className={`pb-1 transition-all duration-200 ${
-                      isActive
-                        ? "text-blue-700 border-b-2 border-blue-700 font-semibold"
-                        : "hover:text-blue-700"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                </motion.li>
-              );
-            })}
-          </ul>
+        {/* Bottom accent stripe */}
+        <AnimatePresence>
+          {isExpanded && !isMobile && (
+            <motion.div key="stripe"
+              initial={{ opacity: 0, scaleX: 0 }}
+              animate={{ opacity: 0.6, scaleX: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+              style={{
+                position: "absolute", bottom: 0, left: "12%", width: "76%", height: 2,
+                background: `linear-gradient(90deg, transparent, ${RED}, #e74c3c, transparent)`,
+                borderRadius: 2, pointerEvents: "none",
+              }}
+            />
+          )}
+        </AnimatePresence>
 
-          {/* Right Side */}
-          <div className="flex items-center gap-6">
-            {/* Cart Icon - Only for customers */}
-           {/* {!isAdmin && (
-              <Link to="/cart" className="relative group">
-                <ShoppingCartIcon className="w-8 h-8 text-stone-700 group-hover:text-blue-700 transition" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-blue-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            )} */}
-            
-
-            {isAdmin && (
-              <button
-                onClick={handleLogout}
-                className="cursor-pointer px-5 py-2 text-sm font-medium hover:text-blue-700 transition"
-              >
-                Déconnexion
-              </button>
-            )}
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden text-3xl text-stone-700"
+        {/* ── DESKTOP inner ── */}
+        <AnimatePresence>
+          {isExpanded && !isMobile && (
+            <motion.div key="desk"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.18, duration: 0.22 }}
+              style={{
+                display: "flex", alignItems: "center",
+                width: "100%", padding: "0 6px 0 16px",
+                whiteSpace: "nowrap", gap: 0, height: 64,
+              }}
             >
-              {menuOpen ? <XMarkIcon className="w-8 h-8" /> : <Bars3Icon className="w-8 h-8" />}
-            </button>
-          </div>
-        </div>
+              <LogoMark />
+              <div style={{ width: 1, height: 22, background: "rgba(255,255,255,0.1)", margin: "0 10px", flexShrink: 0 }} />
+              <nav style={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
+                {navItems.map((item) => (
+                  <NavLink key={item.link} item={item} active={location.pathname === item.link} />
+                ))}
+              </nav>
+              {isAdmin && <LogoutBtn onClick={handleLogout} />}
+              <CloseBtn onClick={(e) => { e.stopPropagation(); setOpen(false); }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden bg-white border-t shadow-xl px-6 py-8"
-          >
-            <ul className="space-y-6 text-xl font-medium">
-              {navItems.map((item, i) => (
-                <li key={i}>
-                  <Link
-                    to={item.link}
-                    onClick={() => setMenuOpen(false)}
-                    className={`block py-2 ${
-                      location.pathname === item.link ? "text-blue-700 font-semibold" : "text-stone-700"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </nav>
+        {/* ── MOBILE inner ── */}
+        <AnimatePresence>
+          {isExpanded && isMobile && (
+            <motion.div key="mob"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.18, duration: 0.22 }}
+              style={{ width: "100%", padding: "16px 16px 18px" }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <LogoMark />
+                <CloseBtn onClick={(e) => { e.stopPropagation(); setOpen(false); }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 12 }}>
+                {navItems.map((item) => (
+                  <MobileNavLink
+                    key={item.link}
+                    item={item}
+                    active={location.pathname === item.link}
+                    onClick={() => setOpen(false)}
+                  />
+                ))}
+              </div>
+              {isAdmin && (
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                  <LogoutBtn mobile onClick={handleLogout} />
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
+}
 
-    </>
+// ─── Sub-components ───────────────────────────────────────────────
+
+function LogoMark() {
+  return (
+    <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0 }}>
+      <div style={{
+        width: 30, height: 30, borderRadius: "50%",
+        background: "#fff",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        flexShrink: 0,
+        boxShadow: "0 0 0 2px rgba(192,57,43,0.25)",
+      }}>
+        <img src={Logo} alt="Logo" style={{ width: 22, height: 22, objectFit: "contain" }} />
+      </div>
+      <span style={{
+        fontSize: 14, fontWeight: 700, color: "#fff",
+        letterSpacing: "0.02em", fontFamily: "inherit",
+      }}>
+        Auto<span style={{ color: "#e74c3c" }}>Shop</span>
+      </span>
+    </Link>
+  );
+}
+
+function NavLink({ item, active }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <Link
+      to={item.link}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontSize: 13, fontWeight: 500,
+        color: active || hov ? "#fff" : "rgba(255,255,255,0.55)",
+        background: active
+          ? "rgba(192,57,43,0.35)"
+          : hov ? "rgba(255,255,255,0.07)" : "transparent",
+        textDecoration: "none",
+        padding: "6px 11px", borderRadius: 20,
+        transition: "color .18s, background .18s",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {item.name}
+    </Link>
+  );
+}
+
+function MobileNavLink({ item, active, onClick }) {
+  return (
+    <Link
+      to={item.link}
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        fontSize: 15, fontWeight: 500,
+        color: active ? "#fff" : "rgba(255,255,255,0.62)",
+        background: active ? "rgba(192,57,43,0.28)" : "transparent",
+        textDecoration: "none",
+        padding: "11px 13px", borderRadius: 13,
+        transition: "color .18s, background .18s",
+      }}
+    >
+      {item.name}
+      <span style={{ opacity: active ? 0.9 : 0.3, color: active ? "#e74c3c" : "inherit", fontSize: 14 }}>›</span>
+    </Link>
+  );
+}
+
+function LogoutBtn({ onClick, mobile = false }) {
+  return (
+    <button onClick={onClick} style={{
+      background: "rgba(192,57,43,0.16)",
+      color: "#e74c3c",
+      border: "1px solid rgba(192,57,43,0.32)",
+      borderRadius: mobile ? 13 : 20,
+      padding: mobile ? "12px 0" : "7px 14px",
+      width: mobile ? "100%" : "auto",
+      fontSize: mobile ? 14 : 12,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "inherit",
+      transition: "background .18s",
+      ...(mobile ? {} : { marginRight: 6, flexShrink: 0 }),
+    }}>
+      Déconnexion
+    </button>
+  );
+}
+
+function CloseBtn({ onClick }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        width: 32, height: 32, borderRadius: "50%", border: "none",
+        background: hov ? "rgba(192,57,43,0.28)" : "rgba(255,255,255,0.07)",
+        color: hov ? "#e74c3c" : "rgba(255,255,255,0.45)",
+        cursor: "pointer",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        flexShrink: 0, marginRight: 4,
+        transition: "background .18s, color .18s",
+      }}
+    >
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    </button>
   );
 }
