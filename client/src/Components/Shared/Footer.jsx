@@ -2,113 +2,140 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Phone, Mail } from "lucide-react";
+import { Phone, Instagram, Facebook, Music } from "lucide-react";
 import Logo from "../../assets/Logo.png";
+
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-stone-200 pt-20 pb-10 px-6">
+    <footer className="bg-[#0B0B0B] text-white pt-20 pb-10 px-6">
+
       <div className="max-w-7xl mx-auto">
 
         {/* TOP GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
 
           {/* BRAND */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              {/* LOGO PLACE */}
-              <img
-                src={Logo}
-                alt="MOBUMES"
-                className="h-full w-full object-contain"
-              />
+          <div className="space-y-5">
 
-            
-            </div>
-
-            <p className="text-stone-600 text-sm leading-relaxed">
-              Spécialiste en fabrication, installation et maintenance de solutions de sécurité physique :
-              coffres-forts, armoires sécurisées et portes blindées.
+            <img
+              src={Logo}
+              alt="Showroom"
+              className="h-32 object-contain rounded-full"
+            />
+          
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Découvrez un showroom automobile moderne spécialisé dans la vente
+              de véhicules sélectionnés pour leur performance, design et fiabilité.
             </p>
+
           </div>
 
-          {/* PAGES */}
+          {/* NAVIGATION */}
           <div>
-            <h3 className="text-lg font-medium mb-4 text-stone-900">Pages</h3>
-            <ul className="space-y-3 text-stone-600">
-              <li><Link to="/" className="hover:text-blue-700">Accueil</Link></li>
-              <li><Link to="/about" className="hover:text-blue-700">À propos</Link></li>
-              <li><Link to="/products" className="hover:text-blue-700">Produits</Link></li>
-              <li><Link to="/sell-us-something" className="hover:text-blue-700">Vendre un produit</Link></li>
+            <h3 className="text-lg font-semibold mb-5">Navigation</h3>
+
+            <ul className="space-y-3 text-gray-400">
+              <li>
+                <Link to="/" className="hover:text-white transition">
+                  Accueil
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/cars" className="hover:text-white transition">
+                  Voitures
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/about" className="hover:text-white transition">
+                  À propos
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/contact" className="hover:text-white transition">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* CONTACT */}
+          {/* CONTACT INFO */}
           <div>
-            <h3 className="text-lg font-medium mb-4 text-stone-900">Contact</h3>
+            <h3 className="text-lg font-semibold mb-5">Contact</h3>
 
-            <div className="space-y-4 text-stone-600 text-sm">
+            <div className="space-y-4 text-gray-400 text-sm">
 
+              {/* PHONE (important conversion element) */}
               <div className="flex items-center gap-3">
-                <Mail size={18} />
+                <Phone size={18} className="text-red-500" />
                 <a
-                  href="mailto:contact@mobumes.com"
-                  className="hover:text-blue-700 transition"
+                  href="tel:+213552240944"
+                  className="hover:text-white transition"
                 >
-                  contact@mobumes.com
+                  +213 552 24 09 44
                 </a>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Phone size={18} />
-                <a
-                  href="tel:023331338"
-                  className="hover:text-blue-700 transition"
-                >
-                  023 33 13 38
-                </a>
-              </div>
+              <p className="text-xs text-gray-500">
+                Disponible tous les jours pour vos demandes
+              </p>
 
             </div>
           </div>
 
-          {/* CTA */}
+          {/* SOCIAL */}
           <div>
-  <h3 className="text-lg font-medium mb-4 text-stone-900">
-    Devenir revendeur
-  </h3>
+            <h3 className="text-lg font-semibold mb-5">Suivez-nous</h3>
 
-  <p className="text-stone-600 text-sm leading-relaxed">
-    Vous souhaitez rejoindre notre réseau de revendeurs ?
-  </p>
+            <div className="space-y-4">
 
-  <Link
-    to="/sell-us-something"
-    className="inline-block mt-5 px-5 py-3 bg-stone-900 hover:bg-blue-700 text-white font-medium rounded-lg transition"
-  >
-    En savoir plus
-  </Link>
-</div>
+              <a
+                href="https://www.instagram.com/fodilautomobile/"
+                target="_blank"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition"
+              >
+                <Instagram size={18} />
+                Instagram
+              </a>
+
+              <a
+                href="https://web.facebook.com/p/Fodil-Automobile-100057527526063/?_rdc=1&_rdr#"
+                target="_blank"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition"
+              >
+                <Facebook size={18} />
+                Facebook
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@fares16sidifredj"
+                target="_blank"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition"
+              >
+                <Music size={18} />
+                TikTok
+              </a>
+
+            </div>
+          </div>
+
         </div>
 
-        {/* BOTTOM BAR */}
-        <div className="mt-16 pt-8 border-t border-stone-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-stone-500">
+        {/* DIVIDER */}
+        <div className="mt-16 border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-500">
 
           <p>
-            © {new Date().getFullYear()} MOBUMES. Tous droits réservés.
+            © {new Date().getFullYear()} Faudil Auto. Tous droits réservés.
           </p>
 
           <p>
-            Site réalisé par <a
-              href="https://softwebelevation.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-700 hover:text-blue-600 transition"
-            >
-              SoftWebElevation
-            </a>
+            Designed & developed with precision
           </p>
 
         </div>
+
       </div>
     </footer>
   );

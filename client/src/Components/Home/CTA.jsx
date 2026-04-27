@@ -2,101 +2,81 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { ArrowRight, PhoneCall, Car } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export default function CTASection() {
+export default function CTA() {
   return (
-    <section className="relative py-28 px-6 bg-stone-950 text-white overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-800 rounded-full blur-3xl" />
-      </div>
+    <section className="py-24 px-6 bg-[#0B0B0B] relative overflow-hidden">
 
-      <div className="relative max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      {/* subtle glow background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.15),transparent_60%)]" />
 
-        {/* LEFT CONTENT */}
+      <div className="relative max-w-5xl mx-auto text-center text-white">
+
+        {/* Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-600/10 border border-red-500/30 text-red-500 rounded-full text-sm font-semibold tracking-widest mb-6"
         >
-          <h2 className="text-4xl sm:text-5xl font-semibold leading-tight">
-            Besoin d’une solution de sécurité fiable ?
-          </h2>
-
-          <p className="mt-6 text-lg text-stone-300 leading-relaxed">
-            Que ce soit pour un coffre-fort, une porte blindée ou une solution de stockage sécurisé,
-            notre équipe vous accompagne de la fabrication jusqu’à l’installation.
-          </p>
-
-          <div className="mt-10 space-y-3 text-stone-300">
-            <p>✔ Devis rapide et personnalisé</p>
-            <p>✔ Installation sur tout le territoire</p>
-            <p>✔ Support technique professionnel</p>
-          </div>
-
-          <div className="mt-10 flex flex-col sm:flex-row gap-4">
-          
-
-            <a
-              href="#contact"
-              className="px-6 py-4 border border-white/30 hover:border-white text-white font-medium rounded-xl transition text-center"
-            >
-              Demander un devis
-            </a>
-          </div>
+          PRÊT À COMMENCER ?
         </motion.div>
 
-        {/* RIGHT FORM */}
-        <motion.div
+        {/* Title */}
+        <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.8 }}
-          className="bg-white text-black rounded-2xl p-8 shadow-2xl"
+          viewport={{ once: true }}
+          className="text-4xl md:text-5xl font-black leading-tight"
         >
-          <h3 className="text-2xl font-semibold mb-6">
-            Demande de devis rapide
-          </h3>
+          Trouvez votre voiture idéale dès maintenant
+        </motion.h2>
 
-          <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="Nom complet"
-              className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-600"
-            />
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          viewport={{ once: true }}
+          className="mt-6 text-gray-300 text-lg max-w-2xl mx-auto"
+        >
+          Explorez notre catalogue, découvrez des véhicules sélectionnés avec soin et passez à l’action en quelques clics.
+        </motion.p>
 
-            <input
-              type="tel"
-              placeholder="Téléphone"
-              className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-600"
-            />
+        {/* Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+        >
 
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-600"
-            />
+          <Link
+            to="/cars"
+            className="group flex items-center justify-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-2xl transition-all active:scale-95"
+          >
+            <Car className="w-5 h-5" />
+            Voir les voitures
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+          </Link>
 
-            <textarea
-              placeholder="Décrivez votre besoin..."
-              rows={4}
-              className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-blue-600"
-            />
+          <Link
+            to="/contact"
+            className="flex items-center justify-center gap-2 px-8 py-4 border border-white/20 text-white hover:bg-white hover:text-black rounded-2xl transition-all"
+          >
+            <PhoneCall className="w-5 h-5" />
+            Nous contacter
+          </Link>
 
-            <button
-              type="button"
-              className="w-full py-4 bg-stone-950 hover:bg-blue-600 text-white font-medium rounded-xl transition"
-            >
-              Envoyer la demande
-            </button>
-          </form>
-
-          <p className="mt-4 text-xs text-stone-500 text-center">
-            Réponse sous 24h • Données confidentielles
-          </p>
         </motion.div>
+
+        {/* micro trust line */}
+        <div className="mt-10 text-sm text-gray-500">
+          Réponse rapide • Support client • Service professionnel
+        </div>
 
       </div>
     </section>

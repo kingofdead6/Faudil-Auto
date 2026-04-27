@@ -4,7 +4,6 @@ import HomePage from "./Pages/HomePage";
 import Navbar from "./Components/Shared/NavBar";
 import Footer from "./Components/Shared/Footer";
 
-import ProductsPage from "./Components/Products/Products";   
 
 import Login from "./Pages/Login";
 import ProtectedRoute from "./Components/Shared/ProtectedRoute";
@@ -20,6 +19,8 @@ import ContactPage from "./Pages/Contact.tsx";
 import AdminContactMessages from "./Components/Admin/AdminContactMessages.jsx";
 import AdminCarNames from "./Components/Admin/AdminCarName.jsx";
 import AdminCars from "./Components/Admin/AdminCars.jsx";
+import CarDetail from "./Components/Cars/CarDetail.jsx";
+import Cars from "./Components/Cars/Cars.jsx";
 
 function App() {
   return (
@@ -30,10 +31,11 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />           
         <Route path="/about" element={<Aboutus />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/sell-us-something" element={<ContactPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/cars" element={<Cars />} />
+        <Route path="/cars/:id" element={<CarDetail />} />
 
         {/* Protected Admin Routes */}
         <Route element={<ProtectedRoute />}>

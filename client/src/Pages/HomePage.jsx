@@ -9,6 +9,8 @@ import CTASection from "../Components/Home/CTA";
 import WhyUs from "../Components/Home/WhyUs";
 import Showroom from "../Components/Home/Showroom";
 import BrandsCarousel from "../Components/Home/BrandsCarousel";
+import HowItWorks from "../Components/Home/HowItWorks";
+import CTA from "../Components/Home/CTA";
 
 
 
@@ -19,9 +21,8 @@ const HomePage = () => {
           <WhyUs />
           <Showroom />
           <BrandsCarousel />
-          <Categories />
+          <CTA />
           <Gallery />
-          <FAQ />
         </>
   );
 };

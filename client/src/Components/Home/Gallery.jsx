@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import React, { useState, useEffect, useRef } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { API_BASE_URL } from "../../../api";
+import { Image as ImageIcon } from "lucide-react";
 
 export default function GallerySection() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const sliderRef = useRef(null);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -29,95 +29,122 @@ export default function GallerySection() {
     fetchGallery();
   }, []);
 
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 6000,           // Smooth continuous speed
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 0,
+    cssEase: "linear",
+    pauseOnHover: true,
+    arrows: false,
+    centerMode: false,
+    responsive: [
+      {
+        breakpoint: 1280,
+        settings: { slidesToShow: 3 },
+      },
+      {
+        breakpoint: 1024,
+        settings: { slidesToShow: 2 },
+      },
+      {
+        breakpoint: 640,
+        settings: { slidesToShow: 1 },
+      },
+    ],
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen pt-32 flex items-center justify-center">
-        <div className="text-2xl font-light text-stone-600 animate-pulse">
-          Chargement de la galerie...
+      <div className="min-h-[60vh] flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full mb-4" />
+          <p className="text-gray-500">Chargement de la galerie...</p>
         </div>
       </div>
     );
   }
 
-  if (!images.length) {
+  if (images.length === 0) {
     return (
-      <div className="min-h-screen pt-32 flex items-center justify-center">
-        <div className="text-xl text-stone-500">
-          Aucune image disponible
+      <div className="min-h-[60vh] flex items-center justify-center bg-white">
+        <div className="text-center">
+          <ImageIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+          <p className="text-xl text-gray-500">Aucune image disponible</p>
         </div>
       </div>
     );
   }
 
   return (
-    <section className="py-24 px-6">
-      <div className="max-w-7xl mx-auto">
-
+    <section className="relative py-24 bg-white  overflow-hidden">
+      <div className=" mx-auto px-6">
+        
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900">
-            Nos réalisations
+          <div className="inline-flex items-center gap-2 px-5 py-2 bg-red-50 text-red-600 rounded-full text-xs font-bold tracking-widest mb-4">
+            NOS RÉALISATIONS
+          </div>
+          <h2 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tighter">
+            Galerie <span className="text-red-600">Photos</span>
           </h2>
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            Découvrez quelques exemples de nos installations et réalisations.
+          <p className="mt-5 text-gray-600 text-lg max-w-2xl mx-auto">
+            Découvrez nos plus belles installations et réalisations automobiles
           </p>
         </motion.div>
 
-        {/* Swiper */}
-        <Swiper
-          modules={[Autoplay, Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={1}
-          loop={images.length > 3}
-          navigation
-          pagination={{ clickable: true }}
-          autoplay={{
-            delay: 3500,
-            disableOnInteraction: false,
-          }}
-          breakpoints={{
-            640: { slidesPerView: 2, spaceBetween: 20 },
-            1024: { slidesPerView: 3, spaceBetween: 25 },
-          }}
-          className="pb-14"
-        >
-          {images.map((item, index) => (
-            <SwiperSlide key={item._id || index}>
+        {/* Continuous Moving Carousel */}
+        <div className="relative">
+          {/* Fade Edges */}
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+          <Slider ref={sliderRef} {...settings}>
+            {images.map((item, index) => (
               <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.4 }}
-                className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+                key={item._id || index}
+                className="px-3"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
               >
-                {/* Image */}
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title || "Gallery image"}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                  />
+                <div className="relative group rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500">
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title || `Réalisation ${index + 1}`}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  </div>
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition" />
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-70 group-hover:opacity-90 transition-all duration-500" />
 
-                {/* Caption */}
-                {item.title && (
-                  <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-                    <h3 className="text-lg font-medium drop-shadow">
-                      {item.title}
-                    </h3>
-                  </div>
-                )}
+                  {/* Caption */}
+                  {item.title && (
+                    <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                      <h3 className="text-xl md:text-2xl font-semibold tracking-tight drop-shadow-md">
+                        {item.title}
+                      </h3>
+                    </div>
+                  )}
+
+                  {/* Subtle border glow */}
+                  <div className="absolute inset-0 border border-transparent group-hover:border-red-500/30 rounded-3xl transition-all duration-500" />
+                </div>
               </motion.div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            ))}
+          </Slider>
+        </div>
       </div>
     </section>
   );
