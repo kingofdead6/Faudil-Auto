@@ -8,7 +8,7 @@ import carRoutes from './Routes/carRoute.js';
 import galleryRoutes from './Routes/galleryRoutes.js';
 
 import contactRoutes from './Routes/contactRoutes.js';
-import carNameRoutes from './Routes/carNameRoutes.js';
+import carNameRoutes from './Routes/carnameRoutes.js';
 
 dotenv.config();
 
