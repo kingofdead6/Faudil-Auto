@@ -8,7 +8,7 @@ import {
   deleteCar,
   getBrands,
   getYears,
-} from '../controllers/carController.js';
+} from '../Controllers/CarController.js';
 // import { protect, admin } from '../middleware/authMiddleware.js'; // uncomment when auth is set up
 
 const router = express.Router();

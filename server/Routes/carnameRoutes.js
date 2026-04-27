@@ -6,7 +6,7 @@ import {
   createCarName,
   updateCarName,
   deleteCarName,
-} from '../controllers/carNameController.js';
+} from '../Controllers/carnameController.js';
 // import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
