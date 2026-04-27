@@ -1,125 +1,91 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
+import { Shield, Eye, Trophy, Users } from "lucide-react";
 
-export default function AboutProducts() {
+const items = [
+  {
+    icon: Shield,
+    title: "Fiabilité",
+    description:
+      "Chaque véhicule est sélectionné et vérifié pour garantir une qualité irréprochable.",
+  },
+  {
+    icon: Eye,
+    title: "Transparence",
+    description:
+      "Nous affichons des informations claires et complètes sur chaque voiture.",
+  },
+  {
+    icon: Trophy,
+    title: "Excellence",
+    description:
+      "Nous visons une expérience premium à chaque étape du parcours client.",
+  },
+  {
+    icon: Users,
+    title: "Accompagnement",
+    description:
+      "Notre équipe vous guide du choix jusqu’à la livraison du véhicule.",
+  },
+];
+
+export default function AboutMission() {
   return (
-    <section className="py-24 px-6 ">
+    <section className="py-24 px-6 bg-white">
+
       <div className="max-w-7xl mx-auto">
+
+        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-semibold tracking-tight text-stone-950">
-            Nos Produits et Services
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900">
+            Notre mission
           </h2>
-          <p className="mt-4 text-xl text-stone-600 max-w-2xl mx-auto">
-            Des solutions de sécurité sur mesure, fabriquées avec rigueur et installées avec expertise.
+
+          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+            Redéfinir l’expérience d’achat automobile avec transparence,
+            simplicité et qualité.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16">
-          {/* Left - Product List */}
-          <div>
-            <h3 className="text-2xl font-semibold text-stone-900 mb-8">
-              Nos réalisations en menuiserie métallique
-            </h3>
-            
-            <ul className="space-y-5 text-lg text-stone-700">
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Coffres-forts de toutes tailles
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Portes de chambres fortes
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Armoires blindées et armoires sécurisées
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Armoires ignifuges
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Armoires à armes
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Armoires à chéquiers
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Armoires en grillage métallique
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Aménagement de chambres fortes
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Portes blindées
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Portes coupe-feu conformes aux normes européennes
-              </li>
-              <li className="flex items-start gap-4">
-                <span className="text-blue-700 mt-1.5 text-xl">•</span>
-                Portes blindées à effet bois conformes aux normes européennes
-              </li>
-            </ul>
-          </div>
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-          {/* Right - Key Strengths */}
-          <div className="space-y-10">
-            <div>
-              <h3 className="text-2xl font-semibold text-stone-900 mb-6">
-                Pourquoi choisir MOBUMES ?
-              </h3>
-              
-              <div className="space-y-8 text-stone-700">
-                <div className="flex gap-5">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-700 font-semibold text-xl">1</div>
-                  <div>
-                    <p className="font-medium text-stone-900">Garantie complète</p>
-                    <p className="mt-1">Sur tous nos produits ainsi que la maintenance et les pièces détachées.</p>
-                  </div>
+          {items.map((item, idx) => {
+            const Icon = item.icon;
+
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white border border-gray-100 hover:border-red-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all"
+              >
+
+                {/* Icon */}
+                <div className="w-14 h-14 mb-6 rounded-2xl bg-red-50 flex items-center justify-center">
+                  <Icon className="w-7 h-7 text-red-600" />
                 </div>
 
-                <div className="flex gap-5">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-700 font-semibold text-xl">2</div>
-                  <div>
-                    <p className="font-medium text-stone-900">Fabrication sur mesure</p>
-                    <p className="mt-1">Nous réalisons des produits spécifiques selon vos cahiers des charges dans des délais très courts.</p>
-                  </div>
-                </div>
+                {/* Title */}
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {item.title}
+                </h3>
 
-                <div className="flex gap-5">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-700 font-semibold text-xl">3</div>
-                  <div>
-                    <p className="font-medium text-stone-900">Installation & Maintenance</p>
-                    <p className="mt-1">Service complet d’installation, réparation et maintenance multi-marques.</p>
-                  </div>
-                </div>
+                {/* Description */}
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {item.description}
+                </p>
 
-                <div className="flex gap-5">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-100 flex-shrink-0 flex items-center justify-center text-blue-700 font-semibold text-xl">4</div>
-                  <div>
-                    <p className="font-medium text-stone-900">Showroom à Staoueli</p>
-                    <p className="mt-1">Venez découvrir nos produits en personne au cœur de Staoueli, Alger.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            );
+          })}
 
-            <div className="pt-8 border-t border-stone-200">
-              <p className="text-stone-600 leading-relaxed">
-                N’hésitez pas à nous contacter pour toute information sur nos produits et services. 
-                Nous serons ravis de répondre à toutes vos questions et de vous accueillir dans nos locaux.
-              </p>
-            </div>
-          </div>
         </div>
+
       </div>
     </section>
   );

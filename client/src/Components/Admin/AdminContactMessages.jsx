@@ -87,23 +87,16 @@ export default function AdminContactMessages() {
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                      <div>
+                      <div className="flex items-center gap-2">
+                        <User size={16} />
                         <h3 className="font-bold text-xl text-gray-900 tracking-tight line-clamp-2">
-                          {msg.subject || "Sans sujet"}
+                          {msg.name}
                         </h3>
-                        <div className="flex items-center gap-2 mt-2 text-gray-600">
-                          <User size={16} />
-                          <span className="font-medium">{msg.name}</span>
-                        </div>
+                      
                       </div>
 
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        <button
-                          onClick={() => setSelectedMessage(msg)}
-                          className="p-3 text-blue-600 hover:bg-blue-50 rounded-2xl transition-all"
-                        >
-                          <Eye size={20} />
-                        </button>
+                    
                         <button
                           onClick={() => handleDelete(msg._id)}
                           className="p-3 text-red-600 hover:bg-red-50 rounded-2xl transition-all"

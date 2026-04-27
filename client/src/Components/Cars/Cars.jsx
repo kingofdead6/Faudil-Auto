@@ -68,7 +68,7 @@ export default function Cars() {
   const allColors = [...new Set(cars.flatMap((car) => car.colors))].sort();
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-24 font-sans">
+    <div className="min-h-screen bg-gray-50 pb-24 font-sans">
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-4 sm:px-8 pt-12 pb-16 md:pt-20 md:pb-24 bg-white border-b border-gray-100">

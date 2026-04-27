@@ -86,8 +86,8 @@ export default function Navbar() {
   const normalNavItems = [
     { name: "Accueil", link: "/" },
     { name: "À propos", link: "/about" },
-    { name: "Produits", link: "/products" },
-    { name: "Contact", link: "/sell-us-something" },
+    { name: "Voitures", link: "/cars" },
+    { name: "Contact", link: "/contact" },
   ];
   const adminNavItems = [
     { name: "Dashboard", link: "/admin/dashboard" },
@@ -114,7 +114,7 @@ export default function Navbar() {
 
   // pill width adapts to item count
   const pillWidth = isAdmin
-    ? (userType === "superadmin" ? 820 : 640)
+    ? (userType === "superadmin" ? 820 : 600)
     : 620;
 
   const pillAnimate = (() => {
@@ -283,7 +283,7 @@ function LogoMark() {
         fontSize: 14, fontWeight: 700, color: "#fff",
         letterSpacing: "0.02em", fontFamily: "inherit",
       }}>
-        Auto<span style={{ color: "#e74c3c" }}>Shop</span>
+        Faudil<span style={{ color: "#e74c3c" }}> Auto</span>
       </span>
     </Link>
   );

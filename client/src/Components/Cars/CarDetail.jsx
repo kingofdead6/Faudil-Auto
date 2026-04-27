@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { ArrowLeft, Calendar, Palette, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ── Utility: derive a CSS color from a French color name ── */
 const COLOR_MAP = {
   blanc: "#FFFFFF", white: "#FFFFFF",
   noir: "#1a1a1a", black: "#1a1a1a",
@@ -26,20 +25,7 @@ const COLOR_MAP = {
 
 function getColorSwatch(name = "") {
   const key = name.toLowerCase().trim();
-  if (COLOR_MAP[key]) return COLOR_MAP[key];
-  // Try partial match
-  for (const [k, v] of Object.entries(COLOR_MAP)) {
-    if (key.includes(k) || k.includes(key)) return v;
-  }
-  return "#e5e7eb"; // fallback light gray
-}
-
-function isLight(hex) {
-  const c = hex.replace("#", "");
-  const r = parseInt(c.substring(0, 2), 16);
-  const g = parseInt(c.substring(2, 4), 16);
-  const b = parseInt(c.substring(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 160;
+  return COLOR_MAP[key] || "#e5e7eb";
 }
 
 export default function CarDetail() {
@@ -68,13 +54,10 @@ export default function CarDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-5">
-          <div className="relative w-14 h-14">
-            <div className="absolute inset-0 rounded-full border-2 border-red-100" />
-            <div className="absolute inset-0 rounded-full border-t-2 border-red-600 animate-spin" />
-          </div>
-          <p className="text-gray-400 text-sm tracking-widest uppercase animate-pulse">Chargement…</p>
+      <div className="min-h-screen bg-[#FDFDFD] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500">Chargement des détails...</p>
         </div>
       </div>
     );
@@ -83,171 +66,74 @@ export default function CarDetail() {
   if (!car) return null;
 
   const images = car.images || [];
-  const hasMultiple = images.length > 1;
+  const hasMultipleImages = images.length > 1;
 
-  const nextImage = () => setCurrentImageIndex((p) => (p + 1) % images.length);
-  const prevImage = () => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
+  const nextImage = () => setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-20 font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
-
-        {/* ── Back button ── */}
+    <div className="min-h-screen bg-[#FDFDFD] pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        {/* Back Button */}
         <motion.button
-          initial={{ opacity: 0, x: -10 }}
+          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate("/cars")}
-          className="flex items-center gap-2 text-gray-500 hover:text-red-600 mb-8 text-sm font-medium transition-colors group"
+          className="flex items-center gap-3 text-gray-600 hover:text-red-600 mb-10 transition-all group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-          Retour aux voitures
+          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium">Retour aux voitures</span>
         </motion.button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-14">
+        <div className="space-y-16">
 
-          {/* ── LEFT: Gallery ── */}
+          {/* ── INFORMATION SECTION (Top) ── */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl"
           >
-            {/* Main image */}
-            <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImageIndex}
-                  src={images[currentImageIndex]}
-                  alt={`${car.brand} ${car.model}`}
-                  initial={{ opacity: 0, scale: 1.03 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="w-full h-full object-cover"
-                />
-              </AnimatePresence>
-
-              {/* Prev / Next arrows */}
-              {hasMultiple && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 border border-gray-200 shadow flex items-center justify-center text-gray-700 hover:bg-white hover:text-red-600 transition-all"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 border border-gray-200 shadow flex items-center justify-center text-gray-700 hover:bg-white hover:text-red-600 transition-all"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
-                </>
-              )}
-
-              {/* Image counter */}
-              {hasMultiple && (
-                <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-black/50 backdrop-blur-sm text-white text-xs font-semibold">
-                  {currentImageIndex + 1} / {images.length}
-                </div>
-              )}
-            </div>
-
-            {/* Thumbnails */}
-            {hasMultiple && (
-              <div className="flex gap-2.5 mt-4 overflow-x-auto pb-1 scrollbar-hide">
-                {images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
-                    className={`flex-shrink-0 w-[72px] h-[54px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                      idx === currentImageIndex
-                        ? "border-red-500 shadow-sm shadow-red-100"
-                        : "border-transparent opacity-60 hover:opacity-90 hover:border-gray-300"
-                    }`}
-                  >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="px-4 py-1.5 bg-red-50 text-red-600 text-xs font-bold tracking-widest rounded-full">
+                VÉHICULE PREMIUM
               </div>
-            )}
-          </motion.div>
-
-          {/* ── RIGHT: Details ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col"
-          >
-            {/* Title */}
-            <div>
-              <span className="inline-block mb-3 px-3 py-1 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase bg-red-50 text-red-600 border border-red-100">
-                Fiche Véhicule
-              </span>
-              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tighter leading-[1]">
-                {car.brand}
-                <br />
-                <span className="text-red-600">{car.model}</span>
-              </h1>
-            </div>
-
-            {/* Meta chips */}
-            <div className="flex flex-wrap items-center gap-3 mt-6">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 shadow-sm">
-                <Calendar size={15} className="text-red-500" />
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Calendar size={18} />
                 <span className="font-semibold text-gray-800">{car.year}</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 shadow-sm">
-                <Palette size={15} className="text-red-500" />
-                <span>{car.colors.length} couleur{car.colors.length > 1 ? "s" : ""}</span>
-              </div>
             </div>
 
-            {/* Divider */}
-            <div className="my-7 h-px bg-gray-100" />
-
-            {/* Description */}
-            {car.description && (
-              <div>
-                <h3 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-3">
-                  Description
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-[15px]">
-                  {car.description}
-                </p>
-              </div>
-            )}
-
-            {/* Divider */}
-            <div className="my-7 h-px bg-gray-100" />
+            <h1 className="text-6xl md:text-7xl font-black text-gray-900 tracking-tighter leading-none">
+              {car.brand} <span className="text-red-600">{car.model}</span>
+            </h1>
 
             {/* Colors */}
-            <div>
-              <h3 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-4">
+            <div className="mt-10">
+              <p className="text-xs uppercase tracking-widest text-gray-500 font-medium mb-4">
                 Couleurs disponibles
-              </h3>
-              <div className="flex flex-wrap gap-3">
+              </p>
+              <div className="flex flex-wrap gap-4">
                 {car.colors.map((color, idx) => {
                   const swatch = getColorSwatch(color);
-                  const light = isLight(swatch);
                   const isSelected = selectedColor === color;
                   return (
                     <button
                       key={idx}
                       onClick={() => setSelectedColor(color)}
-                      title={color}
-                      className={`group flex flex-col items-center gap-1.5 transition-all`}
+                      className={`group flex flex-col items-center transition-all`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full border-2 transition-all duration-200 shadow-sm ${
-                          isSelected
-                            ? "border-red-500 scale-110 shadow-md shadow-red-100"
+                        className={`w-11 h-11 rounded-2xl border-2 shadow-sm transition-all duration-300 ${
+                          isSelected 
+                            ? "border-red-600 scale-110 shadow-red-200" 
                             : "border-gray-200 hover:border-gray-400 hover:scale-105"
-                        } ${swatch === "#FFFFFF" ? "ring-1 ring-gray-200" : ""}`}
+                        }`}
                         style={{ backgroundColor: swatch }}
                       />
-                      <span className={`text-[10px] font-medium transition-colors ${
-                        isSelected ? "text-red-600" : "text-gray-500"
+                      <span className={`mt-2 text-xs font-medium transition-colors ${
+                        isSelected ? "text-red-600" : "text-gray-600"
                       }`}>
                         {color}
                       </span>
@@ -255,19 +141,89 @@ export default function CarDetail() {
                   );
                 })}
               </div>
+            </div>
 
-              {selectedColor && (
-                <motion.p
-                  key={selectedColor}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 text-xs text-gray-400"
-                >
-                  Couleur sélectionnée :{" "}
-                  <span className="text-gray-700 font-semibold">{selectedColor}</span>
-                </motion.p>
+            {/* Description */}
+            {car.description && (
+              <div className="mt-12">
+                <h3 className="text-sm uppercase tracking-widest text-gray-500 font-medium mb-3">
+                  À PROPOS DE CE VÉHICULE
+                </h3>
+                <p className="text-gray-700 leading-relaxed text-[17px]">
+                  {car.description}
+                </p>
+              </div>
+            )}
+          </motion.div>
+
+          {/* ── IMAGES SECTION (Below) ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <div className="relative rounded-3xl overflow-hidden shadow-xl bg-gray-100 aspect-[16/10]">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={images[currentImageIndex]}
+                  alt={`${car.brand} ${car.model}`}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full h-full object-cover"
+                />
+              </AnimatePresence>
+
+              {/* Navigation Arrows */}
+              {hasMultipleImages && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-4 rounded-full shadow-lg transition-all hover:scale-110"
+                  >
+                    <ChevronLeft size={28} className="text-gray-800" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-4 rounded-full shadow-lg transition-all hover:scale-110"
+                  >
+                    <ChevronRight size={28} className="text-gray-800" />
+                  </button>
+                </>
               )}
-            </div>        
+
+              {/* Image Counter */}
+              {hasMultipleImages && (
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/70 text-white text-sm font-medium px-5 py-2 rounded-full backdrop-blur">
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            {hasMultipleImages && (
+              <div className="flex gap-4 mt-6 overflow-x-auto pb-4 scrollbar-hide">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`flex-shrink-0 w-28 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      idx === currentImageIndex 
+                        ? "border-red-600 scale-105 shadow-md" 
+                        : "border-transparent hover:border-gray-300"
+                    }`}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`Thumbnail ${idx + 1}`} 
+                      className="w-full h-full object-cover" 
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

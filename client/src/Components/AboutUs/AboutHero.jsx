@@ -2,69 +2,48 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import ShopImage from "../../assets/shopPic.jpg"; // ← Update with your actual image path
 
 export default function AboutHero() {
   return (
-    <section className="pt-24 pb-20 px-6 ">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          {/* Left - Text Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-stone-950 leading-tight">
-              Qui sommes-nous ?
-            </h1>
-            
-            <div className="mt-10 space-y-6 text-lg text-stone-700 leading-relaxed">
-              <p>
-                MOBUMES est une entreprise spécialisée dans la fabrication de solutions de sécurité physique. 
-                Nous mettons à la disposition de nos clients une équipe expérimentée de spécialistes en maintenance, 
-                réparation et installation de tous types de produits, quelle que soit la marque (coffres-forts, armoires blindées, portes blindées, etc.).
-              </p>
-              <p>
-                Nos services complets vont du conseil et de la conception des produits jusqu’à la livraison et l’installation. 
-                Forts de nombreuses années d’expérience, nous assurons la conception, la fabrication, l’installation et la sécurisation 
-                de vos biens les plus précieux.
-              </p>
-              
-            </div>
+    <section className="relative  py-28 px-6 bg-[#0B0B0B] text-white overflow-hidden">
 
-            <div className="mt-10">
-              <Link
-                to="/sell-us-something"
-                className="inline-block px-8 py-4 bg-stone-900 hover:bg-blue-700 text-white font-medium rounded-2xl transition"
-              >
-                Nous contacter
-              </Link>
-            </div>
-          </motion.div>
+      {/* subtle glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.18),transparent_60%)]" />
 
-          {/* Right - Shop Image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9 }}
-            className="relative rounded-3xl overflow-hidden shadow-2xl"
-          >
-            <img
-              src={ShopImage}
-              alt="Showroom MOBUMES à Staoueli"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            
-            <div className="absolute bottom-8 left-8 text-white">
-              <p className="text-sm uppercase tracking-widest">Notre Showroom</p>
-              <p className="text-2xl font-semibold mt-1">Staoueli, Alger</p>
-            </div>
-          </motion.div>
-        </div>
+      <div className="relative max-w-5xl mx-auto text-center pt-20">
+
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center px-4 py-1.5 bg-red-600/10 border border-red-500/30 text-red-500 rounded-full text-sm font-semibold tracking-widest mb-6"
+        >
+          À PROPOS DE NOUS
+        </motion.div>
+
+        {/* Title */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-6xl font-black leading-tight"
+        >
+          Un showroom automobile{" "}
+          <span className="text-red-600">moderne et fiable</span>
+        </motion.h1>
+
+        {/* Text */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6 text-gray-300 text-lg leading-relaxed max-w-3xl mx-auto"
+        >
+          Nous sommes spécialisés dans la sélection et la vente de véhicules
+          soigneusement choisis pour leur performance, leur design et leur
+          fiabilité. Notre objectif est simple : offrir une expérience
+          automobile fluide, transparente et premium.
+        </motion.p>
+
       </div>
     </section>
   );

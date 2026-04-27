@@ -15,12 +15,12 @@ import NotFound from "./Pages/NotFound";
 import ScrollToTop from "./Components/Shared/ScrollToTop";
 import Aboutus from "./Pages/Aboutus";
 import AdminGallery from "./Components/Admin/AdminGallery";
-import ContactPage from "./Pages/Contact.tsx";
 import AdminContactMessages from "./Components/Admin/AdminContactMessages.jsx";
 import AdminCarNames from "./Components/Admin/AdminCarName.jsx";
 import AdminCars from "./Components/Admin/AdminCars.jsx";
 import CarDetail from "./Components/Cars/CarDetail.jsx";
 import Cars from "./Components/Cars/Cars.jsx";
+import ContactForm from "./Components/contact/ContactForm.tsx";
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<Aboutus />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/contact" element={<ContactForm />} />
         <Route path="/cars" element={<Cars />} />
         <Route path="/cars/:id" element={<CarDetail />} />
 
