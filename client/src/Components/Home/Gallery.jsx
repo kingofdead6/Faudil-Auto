@@ -9,10 +9,25 @@ import axios from "axios";
 import { API_BASE_URL } from "../../../api";
 import { Image as ImageIcon } from "lucide-react";
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1280
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+}
+
 export default function GallerySection() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
+  const width = useWindowWidth();
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -29,11 +44,18 @@ export default function GallerySection() {
     fetchGallery();
   }, []);
 
+  const getSlidesToShow = () => {
+    if (width < 640) return 1;
+    if (width < 1024) return 2;
+    if (width < 1280) return 3;
+    return 4;
+  };
+
   const settings = {
     dots: false,
     infinite: true,
-    speed: 6000,           // Smooth continuous speed
-    slidesToShow: 4,
+    speed: 6000,
+    slidesToShow: getSlidesToShow(),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 0,
@@ -41,20 +63,6 @@ export default function GallerySection() {
     pauseOnHover: true,
     arrows: false,
     centerMode: false,
-    responsive: [
-      {
-        breakpoint: 1280,
-        settings: { slidesToShow: 3 },
-      },
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: 2 },
-      },
-      {
-        breakpoint: 640,
-        settings: { slidesToShow: 1 },
-      },
-    ],
   };
 
   if (loading) {
@@ -80,9 +88,9 @@ export default function GallerySection() {
   }
 
   return (
-    <section className="relative py-24 bg-white  overflow-hidden">
-      <div className=" mx-auto px-6">
-        
+    <section className="relative py-24 bg-white overflow-hidden">
+      <div className="mx-auto px-6">
+
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
