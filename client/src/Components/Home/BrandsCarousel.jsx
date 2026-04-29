@@ -31,14 +31,18 @@ export default function BrandsCarousel() {
   const settings = {
     dots: false,
     infinite: true,
-    speed: 6000,           // Smooth continuous movement
+    speed: 6000,
     slidesToShow: 6,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 0,     // Key for continuous scroll
-    cssEase: "linear",    // Makes movement feel natural and fluid
+    autoplaySpeed: 0,
+    cssEase: "linear",
     pauseOnHover: true,
     arrows: false,
+
+    variableWidth: false,
+    adaptiveHeight: false,
+
     responsive: [
       {
         breakpoint: 1280,
@@ -53,8 +57,16 @@ export default function BrandsCarousel() {
         settings: { slidesToShow: 3 },
       },
       {
+        breakpoint: 640,
+        settings: { slidesToShow: 2 },
+      },
+      {
         breakpoint: 480,
         settings: { slidesToShow: 2 },
+      },
+      {
+        breakpoint: 360,
+        settings: { slidesToShow: 1 },
       },
     ],
   };
@@ -70,7 +82,7 @@ export default function BrandsCarousel() {
   return (
     <section className="relative py-20 bg-white border-y border-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        
+
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -82,46 +94,54 @@ export default function BrandsCarousel() {
           <div className="inline-flex items-center gap-2 px-5 py-2 bg-red-50 text-red-600 rounded-full text-xs font-bold tracking-widest mb-4">
             NOS MARQUES
           </div>
+
           <h2 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tighter">
             Marques <span className="text-red-600">Premium</span>
           </h2>
-       
         </motion.div>
 
-        {/* Carousel Container */}
+        {/* Carousel */}
         <div
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           className="relative"
         >
-          {/* Left & Right Fade Gradients */}
-          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          {/* Fades */}
+          <div className="absolute inset-y-0 left-0 w-16 sm:w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-16 sm:w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <div className="animate-spin w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full" />
             </div>
           ) : brands.length === 0 ? (
-            <p className="text-center text-gray-500 py-10">Aucune marque disponible</p>
+            <p className="text-center text-gray-500 py-10">
+              Aucune marque disponible
+            </p>
           ) : (
             <Slider ref={sliderRef} {...settings}>
               {brands.map((brand) => (
-                <div key={brand._id} className="px-6">
-                  <div className="flex flex-col items-center justify-center h-36 group">
-                    <div className="transition-all duration-500 group-hover:scale-110">
+                <div
+                  key={brand._id}
+                  className="flex justify-center items-center"
+                >
+                  <div className="flex flex-col items-center justify-center h-32 group">
+
+                    <div className="transition-transform duration-500 group-hover:scale-110">
                       <img
                         src={brand.imageUrl}
                         alt={brand.name}
-                        className="h-25 md:h-20 w-auto object-contain 
-                                   opacity-70 group-hover:opacity-100 
-                                   grayscale group-hover:grayscale-0 
+                        className="h-16 sm:h-20 w-auto object-contain
+                                   opacity-70 group-hover:opacity-100
+                                   grayscale group-hover:grayscale-0
                                    transition-all duration-500"
                       />
                     </div>
-                    <p className="mt-4 text-sm font-medium text-gray-700 tracking-wide group-hover:text-red-600 transition-colors">
+
+                    <p className="mt-3 text-sm font-medium text-gray-700 tracking-wide group-hover:text-red-600 transition-colors">
                       {brand.name}
                     </p>
+
                   </div>
                 </div>
               ))}
