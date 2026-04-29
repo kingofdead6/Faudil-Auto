@@ -113,7 +113,7 @@ export default function BrandsCarousel() {
                       <img
                         src={brand.imageUrl}
                         alt={brand.name}
-                        className="h-16 md:h-20 w-auto object-contain 
+                        className="h-25 md:h-20 w-auto object-contain 
                                    opacity-70 group-hover:opacity-100 
                                    grayscale group-hover:grayscale-0 
                                    transition-all duration-500"
